@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>signUp Page</title>
+    <style>
+        body {
+            background-image: url("images/1.jpg");
+            height: 200px;
+            width: auto;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+
+        #container {
+            padding-top: 50px;
+            display: flex;
+            /* flex-direction; */
+            justify-content: center;
+            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        }
+
+        #innerDiv {
+            border-radius: 10px;
+            padding-left: 10px;
+            padding-right: 10px;
+            justify-content: center;
+            background-color: rgba(255, 255, 255, 0.813);
+            padding-top: 40px;
+            padding-bottom: 40px;
+        }
+
+        .inputs {
+            width: 170px;
+            margin-bottom: 10px;
+            border: none;
+            background-color: rgba(255, 255, 255, 0.062);
+        }
+
+        .btn {
+            background-color: rgba(255, 255, 255, 0.062);
+            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+            font-size: 15px;
+            border-radius: 5px;
+            border: none;
+            margin-left: 30%;
+            margin-bottom: 10px;
+
+        }
+
+        .btn:hover {
+            background-color: rgb(194, 185, 185);
+        }
+
+        #b {
+            margin-left: 35%;
+            color: rgb(84, 84, 170);
+        }
+        #lng {
+            margin-left: 50px;
+            color: rgb(116, 39, 39);
+            font-family: cursive;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="container">
+        <div id="innerDiv">
+            <h3 id="lng">SIGNUP</h3>
+            <input type="text " id="name" placeholder="name" class="inputs"><br>
+            <input type="text" id="email" placeholder="email" class="inputs"><br>
+            <input type="password" id="pass" placeholder="pasaword" class="inputs"><br>
+            <input type="password" id="dublicate-pass" placeholder=" confirm password" class="inputs"><br>
+            <button id="button" class="btn">Register</button>
+            <button onclick="func()" id="b" class="btn">login</button>
+        </div>
+    </div>
+
+</body>
+<script>
+    let name;
+    let arr = [];
+    const button = document.getElementById("button");
+    button.addEventListener('click', () => {
+        const name = document.getElementById("name").value;
+        const email = document.getElementById("email").value;
+        const pass = document.getElementById("pass").value;
+        const Re_pass = document.getElementById("dublicate-pass").value;
+        if (Re_pass != pass) {
+            alert("Incorrect Re-password! ");
+        }
+        else if (!email.includes('@')) {
+            alert("Email should contains @");
+        }
+
+        // Adding new data or new user to our database
+        else {
+            const obj = {
+                "name": name,
+                "email": email,
+                "password": pass,
+                "role": 'user'
+            }
+            //getting loacl stoorage 
+            getLocalStorage();
+            arr.push(obj);// pushing into the array
+
+            // console.log(arr);
+            setLocalStorage();// save to the local storage 
+
+
+            // let object = {
+            //     "Name": name,
+            //     "role": 'user'
+            // }
+
+            // localStorage.setItem("status", JSON.stringify(object));
+
+            alert("Registered.");
+            location.href = "login.html";
+        }
+
+    })
+
+
+    function getLocalStorage() {
+        arr = JSON.parse(localStorage.getItem('Accounts')) || [];
+    }
+    function setLocalStorage() {
+        localStorage.setItem('Accounts', JSON.stringify(arr));
+    }
+
+    function func() {
+        location.href = "login.html";
+    }
+
+</script>
+
+</html>

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <style>
+        body {
+            background-image: url("images/1.jpg");
+            /* height: auto; */
+            height: 200px;
+            width: auto;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+
+        #contianer {
+            padding-top: 50px;
+            display: flex;
+            justify-content: center;
+            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        }
+
+        #innerDiv {
+            border-radius: 10px;
+            padding-left: 10px;
+            padding-right: 10px;
+            justify-content: center;
+            background-color: rgba(255, 255, 255, 0.813);
+            padding-top: 40px;
+            padding-bottom: 40px;
+        }
+
+        #btn {
+            background-color: rgba(255, 255, 255, 0.062);
+            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+            font-size: 15px;
+            border-radius: 5px;
+            border: none;
+            margin-left: 35%;
+            margin-bottom: 10px;
+
+        }
+        #btn:hover{
+            background-color:rgb(194, 185, 185);
+        }
+
+        #pass {
+            width: 170px;
+            margin-bottom: 10px;
+            border: none;
+            background-color: rgba(255, 255, 255, 0.062);
+        }
+
+        #email {
+            width: 170px;
+            margin-bottom: 10px;
+            border: none;
+            background-color: rgba(255, 255, 255, 0.062);
+        }
+
+        #lng {
+            margin-left: 50px;
+            color: rgb(116, 39, 39);
+            font-family: cursive;
+        }
+        .b{
+            color: rgb(84, 84, 170);
+        }
+    </style>
+</head>
+
+<body>
+    <div id="contianer">
+
+        <div id="innerDiv">
+            <h3 id="lng">LOGIN</h3>
+
+            <!-- <label for="email"> email : </label> -->
+            <input id="email" type="text" placeholder="email"><br>
+
+            <!-- <label for="pass"> Password : </label> -->
+            <input type="password" id="pass" placeholder="pasaword"><br>
+            <button id="btn"> submit </button>
+            <button onclick="func()" id="btn"class="b"> signup</button>
+        </div>
+
+    </div>
+</body>
+<script>
+    let name;
+    let emailAsKey;
+    let role;
+    let arr = [];
+    const btn = document.getElementById('btn');
+    btn.addEventListener('click', () => {
+        const email = document.getElementById("email").value;
+        const pass = document.getElementById("pass").value;
+        getLocalStorage();
+        let arr2 = arr.filter((item) => {
+            if (item.email == email) {
+                if (item.password == pass) {
+                    name = item.name;
+                    role = item.role;
+                    emailAsKey = item.email;
+                    return true;
+                }
+            }
+        })
+
+
+
+
+        // if (item.password == Password) {
+        //     // console.log(item.name);
+        //     // console.log(item.profession);
+        //     // console.log("Password was " + item.password);
+
+        // }
+        // else {
+        //     alert("Incorrect password!");
+        // }
+
+        // else {
+        //     alert("incorrect Profession")
+        // }
+
+        // else {
+        //     alert("incorrect name");
+        // }
+
+
+        // checking true or false in new array 
+
+        if (arr2.length == 0) {
+            alert("Invalid User.... ");
+        }
+        else {
+            console.log(emailAsKey);
+            let objecter = {
+                "name": name,
+                "role": role,
+                "key": emailAsKey
+            }
+
+            console.log(objecter);
+
+            localStorage.setItem("status", JSON.stringify(objecter));
+
+            location.href = "MainPage.html";
+
+        }
+    })
+    function func(){
+        location.href="signup.html";
+    }
+
+    function getLocalStorage() {
+        arr = JSON.parse(localStorage.getItem('Accounts')) || [];
+    }
+</script>
+
+</html>

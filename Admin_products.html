@@ -1,0 +1,342 @@
+<!-- 
+    project 1 --  15-02-2024
+ -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <style>
+
+        /* Container styles */
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        /* Heading styles */
+        h2 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        /* Input styles */
+        input[type="text"] {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            width: calc(100% - 22px);
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="text"]:focus {
+            border-color: #4CAF50;
+        }
+
+        /* Button styles */
+        button {
+            padding: 10px 20px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #productList {
+            margin-top: 20px;
+        }
+
+        .productItem {
+            background-color: #f9f9f9;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.3s ease;
+        }
+
+        .productItem:hover {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .productItem span {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 16px;
+            color: #555;
+        }
+        .productItem button {
+            margin-top: 5px;
+            background-color: #f44336;
+            transition: background-color 0.3s ease;
+        }
+
+        .productItem button:hover {
+            background-color: #d32f2f;
+        }
+
+        span {
+            margin-left: 20px;
+        }
+    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Area</title>
+</head>
+
+<body>
+    <h2>
+        <a href="MainPage.html"> Main page </a>
+    </h2>
+    Product name : <input type="text" id="p_name"><br>
+    product description : <input type="text" id="p_description"><br>
+    Price : <input type="text" id="p_price"><br>
+    <button type="button" id="sub"> submit</button>
+    <div id="productList"></div>
+
+
+
+</body>
+
+<script>
+    // var temp = 0;- figment
+    let plist = document.getElementById('productList');
+    let id = -10;// -10 not of any obj
+    var array = [];
+    // let array = [
+    //     {
+    //         "name": "Smartphone",
+    //         "desc": "High-tech device",
+    //         "price": 399.99,
+    //         "id": Date.now()
+    //     },
+    //     {
+    //         "name": "Laptop",
+    //         "desc": "Powerful computer",
+    //         "price": 899.99,
+    //         "id": Date.now()
+    //     },
+    //     {
+    //         "name": "Smart TV",
+    //         "desc": "4K Ultra HD",
+    //         "price": 699.99,
+    //         "id": Date.now()
+    //     },
+    //     {
+    //         "name": "Headphones",
+    //         "desc": "Wireless with noise-cancellation",
+    //         "price": 149.99,
+    //         "id": Date.now()
+    //     },
+    //     {
+    //         "name": "Fitness Tracker",
+    //         "desc": "Heart rate monitor",
+    //         "price": 79.99,
+    //         "id": Date.now()
+    //     },
+    //     {
+    //         "name": "Gaming Console",
+    //         "desc": "Immersive gameplay",
+    //         "price": 499.99,
+    //         "id": Date.now()
+    //     },
+    //     {
+    //         "name": "Digital Camera",
+    //         "desc": "Professional-grade",
+    //         "price": 1199.99,
+    //         "id": Date.now()
+    //     },
+    //     {
+    //         "name": "Wireless Router",
+    //         "desc": "High-speed",
+    //         "price": 89.99,
+    //         "id": Date.now()
+    //     },
+    //     {
+    //         "name": "External Hard Drive",
+    //         "desc": "Large-capacity storage",
+    //         "price": 129.99,
+    //         "id": Date.now()
+    //     },
+    //     {
+    //         "name": "Bluetooth Speaker",
+    //         "desc": "Portable sound",
+    //         "price": 59.99,
+    //         "id": Date.now()
+    //     }
+    // ];
+
+    // saveToStorage();
+    // getArray();
+    let candidateId = "";
+    let Inputname;
+    let Inputdesc;
+    let Inputprice;
+    let mode = 0;
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const array = JSON.parse(localStorage.getItem('array')) || [];
+        array.forEach((item) => {
+            fetchStorage(item);
+        })
+    })
+
+
+
+
+    const submit = document.getElementById("sub");
+    submit.addEventListener('click', () => {
+        //input content 
+        const name = document.getElementById("p_name").value;
+        const desc = document.getElementById("p_description").value;
+        const price = document.getElementById("p_price").value;
+        const obj = {
+            "name": name,
+            "desc": desc,
+            "price": price,
+            "id": Date.now()
+        }
+        // temp++;- figment
+
+        const arr = JSON.parse(localStorage.getItem('array')) || [];
+        arr.push(obj);
+        localStorage.setItem('array', JSON.stringify(arr));
+        fetchStorage(obj);
+    });
+
+    function fetchStorage(obj) {
+
+        if (mode == 0) {
+            let innerDiv = document.createElement('div');
+
+            let nameSpan = document.createElement('span');
+            let descSpan = document.createElement('span');
+            let priceSpan = document.createElement('span');
+
+            nameSpan.setAttribute('id', "s1" + obj.id);
+            descSpan.setAttribute('id', "s2" + obj.id);
+            priceSpan.setAttribute('id', "s3" + obj.id);
+
+            nameSpan.innerHTML = obj.name;
+            descSpan.innerHTML = obj.desc;
+            
+            priceSpan.innerHTML = obj.price;
+
+            innerDiv.appendChild(nameSpan);
+            innerDiv.appendChild(descSpan);
+            innerDiv.appendChild(priceSpan);
+
+            const update = document.createElement("button");
+            update.setAttribute('id', "upd");// <button id = "upd" candidate_id="obj.id" > update </button>
+            update.innerText = "update";
+            update.setAttribute('candidate_id', obj.id);
+
+            const del = document.createElement("button");
+            del.innerHTML = "delete";
+            del.setAttribute('id', "del");
+            del.setAttribute('candidate_id', obj.id);
+
+            innerDiv.append(update);
+            innerDiv.append(del);
+            plist.appendChild(innerDiv);
+
+
+            del.addEventListener('click', () => {
+                
+                candidateId = del.getAttribute('candidate_id');// array me same id ba and paragraph me p1+candidateId ba 
+                // document.getElementById("s1" + candidateId).remove();
+                // document.getElementById("s2" + candidateId).remove();
+                // document.getElementById("s3" + candidateId).remove();
+
+                //2 
+                // array = JSON.parse(localStorage.getItem('array'));
+                getArray();
+                array = array.filter((item) => {
+                    if (item.id != candidateId) {
+                        return true;
+                        console.log("done ")
+                    }
+                })
+                innerDiv.remove();
+
+                saveToStorage();
+                saveToStorage()
+
+            })
+
+            // 2)
+            update.addEventListener('click', () => {
+                console.log("update button clicked... ")
+                candidateId = update.getAttribute('candidate_id');
+                updateToOverall();
+            })
+
+
+
+        }
+
+        else {
+            saveToPage();
+        }
+    }
+
+    function updateToOverall() {
+        console.log("start point ");
+        let array_name;
+        let array_desc;
+        let arrray_price;
+        getArray();
+        array.forEach((item) => {
+            if (item.id == candidateId) {
+                array_name = item.name;
+                array_desc = item.desc;
+                arrray_price = item.price;
+            }
+        })
+
+        document.getElementById("p_name").value = array_name;
+        document.getElementById("p_description").value = array_desc;
+        document.getElementById("p_price").value = arrray_price;
+        console.log("all done ")
+        mode = 1;
+
+
+
+    }
+    function saveToPage() {
+        mode = 0;
+        getInputField();
+        document.getElementById("s1" + candidateId).innerText = Inputname;
+        document.getElementById("s2" + candidateId).innerText = Inputdesc;
+        document.getElementById("s3" + candidateId).innerText = Inputprice;
+
+    }
+
+    function getInputField() {
+        Inputname = document.getElementById("p_name").value;
+        Inputdesc = document.getElementById("p_description").value;
+        Inputprice = document.getElementById("p_price").value;
+    }
+
+    function getArray() {
+        array = JSON.parse(localStorage.getItem('array'));
+    }
+
+    function saveToStorage() {
+        localStorage.setItem('array', JSON.stringify(array));
+    }
+</script>
+
+</html>

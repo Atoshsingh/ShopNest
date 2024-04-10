@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Cart</title>
+</head>
+<style>
+    #items {
+        display: flex;
+        flex-direction: column;
+        background-color: lightyellow;
+        height: auto;
+    }
+
+    #innerDiv {
+        margin-bottom: 15px;
+    }
+
+    #span {
+        margin-right: 50px;
+        margin-left: 10px;
+    }
+</style>
+
+<body>
+    <p id="popMessage"></p>
+    <a href="MainPage.html"> Home page </a>
+
+    <h1> Item in your cart </h1>
+    <div id="items"></div>
+    <div id="tPrize"></div>
+
+</body>
+
+<script>
+
+
+
+    let itemAndQty = [];
+
+
+    let publicCart = [];
+    let currUserInStatus = [];
+    let userArray = [];
+
+    let publicCartQty = [];
+    function getPublicCartQty() {
+        publicCartQty = JSON.parse(localStorage.getItem("publicCartQty")) || [];
+    }
+    function setPublicCartQty() {
+        localStorage.setItem("publicCartQty", JSON.stringify(publicCartQty));
+    }
+
+
+    getStatusDetails();
+    getPublicCart();
+    getPublicCartQty();
+    publicCart.forEach((item) => {
+        if (item.key == currUserInStatus.key) {
+            item.allItems.forEach((temp) => {
+                let obj = {
+                    "iten_name": temp.iten_name,
+                    "item_prise": temp.item_prise,
+                    "item_qty": temp.item_qty
+                }
+                itemAndQty.push(obj);
+            })
+        }
+    })
+
+
+
+
+
+
+    const newObj = {
+        "key": currUserInStatus.key,
+        "allItems": itemAndQty
+    }
+
+    publicCartQty.push(newObj);
+
+    setPublicCartQty();
+
+
+    // Page works
+    getPublicCart();
+    getStatusDetails();
+    userArray = publicCart.filter((item) => {
+
+        if (item.key == currUserInStatus.key) {
+            return item;
+        }
+    })
+
+
+    let totalPrize = 0;
+    let div = document.getElementById("items")
+    let tPrize = document.getElementById("tPrize");
+    let spanForTprise = document.createElement('span');
+    userArray[0].allItems.forEach((item) => {
+
+        let magicPrize = item.item_prise / item.item_qty;
+        console.log(magicPrize);
+
+
+        let innerDiv = document.createElement('div');
+        let span = document.createElement('span');
+        span.setAttribute('id', "span");
+        span.innerText = item.iten_name;
+        innerDiv.appendChild(span);
+        innerDiv.setAttribute('id', "innerDiv");
+        totalPrize = totalPrize + JSON.parse(item.item_prise);
+
+        let totalPrizeSpan = document.createElement('span');
+        totalPrizeSpan.innerText = JSON.parse(item.item_prise);
+        totalPrizeSpan.setAttribute('id', "span");
+
+        // buttons
+
+        let minus = document.createElement('button');
+        let plus = document.createElement('button');
+        minus.setAttribute('id', ',minus');
+        plus.setAttribute('id', ',minus');
+        minus.innerText = "-";
+        plus.innerText = "+";
+
+        let countSpan = document.createElement('span');
+
+        // countSpan.setAttribute('id', iten_name + "span");
+        // let count = 1;
+
+        countSpan.innerText = JSON.parse(item.item_qty);
+
+
+        minus.addEventListener('click', () => {
+
+            getPublicCartQty();
+            let qty;
+            let curr_prise;
+            let plug = 0;
+            publicCartQty = publicCartQty.filter((bus) => {
+                bus.allItems = bus.allItems.filter((innerBus) => {
+                    if (innerBus.iten_name == item.iten_name) {
+                        if (innerBus.item_qty != 1) {
+                            innerBus.item_qty = innerBus.item_qty - 1;
+                            qty = innerBus.item_qty;
+                            // totalPrize = totalPrize - JSON.parse(item.item_prise);
+                            totalPrize = totalPrize - JSON.parse(magicPrize);
+                            innerBus.item_prise = innerBus.item_qty * magicPrize;
+                            plug = 0;
+                        }
+                        else {
+                            plug = 1;
+                        }
+
+                    }
+                    return innerBus;
+                })
+                return bus;
+            })
+            localStorage.removeItem('publicCartQty');
+            setPublicCartQty();
+
+
+            if (plug == 0) {
+                // let currPrice = item.item_prise * qty;// now
+                let currPrice = magicPrize * qty;// now
+                countSpan.innerText = qty;
+                totalPrizeSpan.innerText = currPrice;
+
+                TOTALPRICE()
+                update();
+
+                // location.reload();
+
+            }
+            else {
+                
+            }
+        })
+
+        plus.addEventListener('click', () => {
+            // totalPrize = totalPrize + JSON.parse(item.item_prise);
+            totalPrize = totalPrize + JSON.parse(magicPrize);
+
+
+
+            getPublicCartQty();
+            let qty;
+            publicCartQty = publicCartQty.filter((bus) => {
+                bus.allItems = bus.allItems.filter((innerBus) => {
+                    if (innerBus.iten_name == item.iten_name) {
+                        innerBus.item_qty = innerBus.item_qty + 1;
+                        innerBus.item_prise = innerBus.item_qty * magicPrize;
+                        qty = innerBus.item_qty;
+                    }
+                    return innerBus;
+                })
+                return bus;
+            })
+
+            setPublicCartQty();
+
+            // let currPrice = magicPrize * qty;
+
+            countSpan.innerText = qty;
+            // updating the value of count on the local storage ....
+            totalPrizeSpan.innerText = magicPrize * qty;
+            TOTALPRICE();
+
+            update();
+            // location.reload();
+
+        })
+
+        // remove item button 
+        let remove = document.createElement("button");
+        remove.innerText = "Remove";
+
+
+
+        remove.addEventListener('click', () => {
+            // when i will click to the remove then it will remove and the total prise of that ...!
+            let qty;
+            let prise;
+            getPublicCartQty();
+            publicCartQty = publicCartQty.filter((temp) => {
+                temp.allItems = temp.allItems.filter((innerItem) => {
+                    if (innerItem.iten_name != item.iten_name) {
+                        return innerItem;
+                    }
+                    else {
+                        qty = innerItem.item_qty;
+                    }
+                })
+                return temp;
+            })
+
+            setPublicCartQty();
+
+            // getPublicCartQty();
+
+            let total = qty * magicPrize;
+            totalPrize = totalPrize - total;
+            totalPrizeSpan.innerText = totalPrize;
+
+            TOTALPRICE();
+            innerDiv.remove();
+        })
+
+
+        innerDiv.appendChild(minus);
+        update();
+        function update() {
+            innerDiv.appendChild(countSpan)
+            innerDiv.appendChild(plus);
+            innerDiv.appendChild(totalPrizeSpan);
+            innerDiv.appendChild(remove);
+        }
+
+        div.appendChild(innerDiv);
+
+    })
+
+    TOTALPRICE();
+    function TOTALPRICE() {
+        spanForTprise.innerText = `Total Price ` + totalPrize;
+        tPrize.appendChild(spanForTprise);
+    }
+
+
+    getPublicCartQty();
+    window.addEventListener('beforeunload', () => {
+
+        
+
+        getPublicCart();
+        getPublicCartQty();
+
+        let newArray = [];
+
+        publicCartQty.forEach((item) => {
+
+            item.allItems.forEach((innerItem) => {
+                let obj = {
+                    "iten_name": innerItem.iten_name,
+                    "item_prise": innerItem.item_prise,
+                    "item_qty": innerItem.item_qty
+                }
+                newArray.push(obj);
+            })
+        })
+
+
+        getPublicCart();
+        publicCart = publicCart.filter((temp) => {
+            if (temp.key == currUserInStatus.key) {
+                temp.allItems = newArray;
+            }
+            return temp;
+        })
+        setPublicCart();
+
+        localStorage.removeItem('publicCartQty');
+    })
+
+
+
+
+
+
+
+
+
+
+
+
+    // functions
+    function getStatusDetails() {// Geting value of current user of status in localstorage 
+        currUserInStatus = JSON.parse(localStorage.getItem('status')) || [];
+    }
+    function getPublicCart() {// Geting hole public carts in a variable called publicCart
+        publicCart = JSON.parse(localStorage.getItem("publicCart")) || [];
+    }
+    function setPublicCart() {// setting hole public carts in localStorage with the key publicCart
+        localStorage.setItem("publicCart", JSON.stringify(publicCart));
+    }
+
+</script>
+
+</html>
+
+
+<!-- 
+    In last i have to copy my all publicCartQty variable to publicCartQty becooz of after refreshing or newComing to that changes should reflect 
+
+
+ -->
